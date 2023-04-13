@@ -11,6 +11,8 @@ const ExpenseForm = (props) => {
   //   enteredDate: "",
   // });
 
+  // const [valueAddExp, setValueAddExp] = useState(false);
+
   const titleChangeHandler = (event) => {
     setEnteredTitle(event.target.value);
     // setUserInput({
@@ -55,6 +57,18 @@ const ExpenseForm = (props) => {
     setEnteredDate("");
   };
 
+  // const toggleNewExp = () => {
+  //   setValueAddExp((prevState) => !prevState);
+  // };
+
+  // if (!valueAddExp) {
+  //   return (
+  //     <div className="new-expense__actions">
+  //       <button onClick={toggleNewExp}>Add New Expense</button>
+  //     </div>
+  //   );
+  // }
+
   return (
     <form onSubmit={submitHandler}>
       <div className="new-expense__controls">
@@ -90,6 +104,12 @@ const ExpenseForm = (props) => {
         </div>
       </div>
       <div className="new-expense__actions">
+        {/* <button type="button" onClick={toggleNewExp}>
+          Cancel
+        </button> */}
+        <button type="button" onClick={props.onHideForm}>
+          Cancel
+        </button>
         <button type="submit">Add Expense</button>
       </div>
     </form>
