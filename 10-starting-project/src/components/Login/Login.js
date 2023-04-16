@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -42,35 +42,36 @@ const Login = (props) => {
     isValid: null,
   });
 
-  // useEffect(() => {
-  //   const identifier = setTimeout(() => {
-  //     setFormIsValid(
-  //       enteredEmail.includes("@") && enteredPassword.trim().length > 6
-  //     );
-  //   }, 500);
+  // Object destructuring and assigning an alias to (email/password).isValid for checking validity form only on change of validity and not on change og single character.
 
-  //   return () => {
-  //     clearTimeout(identifier);
-  //   };
-  // }, [enteredEmail, enteredPassword]);
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      setFormIsValid(emailIsValid && passwordIsValid);
+    }, 500);
+
+    return () => {
+      clearTimeout(identifier);
+    };
+  }, [emailIsValid, passwordIsValid]);
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
 
     // setEnteredEmail(event.target.value);
-    // setFormIsValid(
-    //   event.target.value.includes("@") && enteredPassword.trim().length > 6
-    // );
+    // setFormIsValid(emailState.isValid && passwordState.isValid);
   };
 
   const passwordChangeHandler = (event) => {
     dispatchPassword({ type: "USER_INPUT", val: event.target.value });
     // setEnteredPassword(event.target.value);
 
-    setFormIsValid(
-      passwordState.isValid && emailState.isValid
-      // event.target.value.trim().length > 6 && enteredEmail.includes("@")
-    );
+    // setFormIsValid(
+    //   passwordState.isValid && emailState.isValid
+    //   // event.target.value.trim().length > 6 && enteredEmail.includes("@")
+    // );
   };
 
   const validateEmailHandler = () => {
