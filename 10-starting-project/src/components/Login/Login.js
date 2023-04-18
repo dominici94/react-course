@@ -1,8 +1,16 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, {
+  useState,
+  useReducer,
+  useEffect,
+  useContext,
+  useRef,
+} from "react";
 
 import Card from "../UI/Card/Card";
-import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import Input from "../UI/Input/Input";
+import AuthContext from "../../store/auth-context";
+import classes from "./Login.module.css";
 
 const emailReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
@@ -42,10 +50,15 @@ const Login = (props) => {
     isValid: null,
   });
 
+  const authCtx = useContext(AuthContext);
+
   // Object destructuring and assigning an alias to (email/password).isValid for checking validity form only on change of validity and not on change og single character.
 
   const { isValid: emailIsValid } = emailState;
   const { isValid: passwordIsValid } = passwordState;
+
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
 
   useEffect(() => {
     const identifier = setTimeout(() => {
@@ -87,13 +100,20 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+
+    if (formIsValid) {
+      authCtx.onLogin(emailState.value, passwordState.value);
+    } else if (!emailIsValid) {
+      emailInputRef.current.focus();
+    } else {
+      passwordInputRef.current.focus();
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
+        {/* <div
           className={`${classes.control} ${
             emailState.isValid === false ? classes.invalid : ""
           }`}
@@ -106,8 +126,29 @@ const Login = (props) => {
             onChange={emailChangeHandler}
             onBlur={validateEmailHandler}
           />
-        </div>
-        <div
+        </div> */}
+        <Input
+          ref={emailInputRef}
+          id="email"
+          label="E-Mail"
+          type="email"
+          isValid={emailIsValid}
+          value={emailState.value}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+        />
+
+        <Input
+          ref={passwordInputRef}
+          id="password"
+          label="Password"
+          type="password"
+          isValid={passwordIsValid}
+          value={passwordState.value}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+        />
+        {/* <div
           className={`${classes.control} ${
             passwordState.isValid === false ? classes.invalid : ""
           }`}
@@ -120,11 +161,14 @@ const Login = (props) => {
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
-        </div>
+        </div> */}
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn}>
             Login
           </Button>
+          {/* <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+            Login
+          </Button> */}
         </div>
       </form>
     </Card>
