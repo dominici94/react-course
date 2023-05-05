@@ -1,22 +1,23 @@
 import EventsList from "../components/EventsList";
+import { Suspense } from "react";
 
-import { useLoaderData, json } from "react-router-dom";
+import { useLoaderData, defer, Await } from "react-router-dom";
 
 function EventsPage() {
-  const data = useLoaderData();
+  const { events } = useLoaderData();
 
-  // if (data.isError) {
-  //   return <p>{data.message}</p>;
-  // }
-
-  const events = data.events;
-
-  return <>{<EventsList events={events} />}</>;
+  return (
+    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+      <Await resolve={events}>
+        {(loadedEvents) => <EventsList events={loadedEvents} />}
+      </Await>
+    </Suspense>
+  );
 }
 
 export default EventsPage;
 
-export async function loader() {
+async function loadEvents() {
   // LOADER EXECUTE IN BROWSER SO YOU CAN USE ALL BROWSER API (EX: LOCALSTORAGE), BUT CAN'T USE REACT HOOKS (ONLY AVAILABLE IN REACT COMPONENTS)! WHILE LOADER FUNCTION IS NOT A REACT COMPONENT
   const response = await fetch("http://localhost:8080/events");
 
@@ -30,6 +31,13 @@ export async function loader() {
   } else {
     // const resData = await response.json();
     // return resData.events;
-    return response;
+    const resData = await response.json();
+    return resData.events;
   }
+}
+
+export function loader() {
+  return defer({
+    events: loadEvents(),
+  });
 }
