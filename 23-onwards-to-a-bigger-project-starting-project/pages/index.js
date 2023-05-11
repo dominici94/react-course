@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { MongoClient } from "mongodb";
 
 // import { useEffect, useState } from "react";
@@ -28,7 +29,18 @@ function HomePage(props) {
   //   setLoadedMeetups(DUMMY_MEETUPS);
   // }, []);
 
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <>
+      <Head>
+        <title>React Meetups</title>
+        <meta
+          name="description"
+          content="Browse a huge list of higly active React meetups!"
+        />
+      </Head>
+      <MeetupList meetups={props.meetups} />;
+    </>
+  );
 }
 
 // export async function getServerSideProps(context) {
